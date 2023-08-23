@@ -1,5 +1,6 @@
 ﻿using _127_WebAPIProductsReviews3.Data;
 using _127_WebAPIProductsReviews3.Models;
+using _127_WebAPIProductsReviews3.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace _127_WebAPIProductsReviews3.Controllers
@@ -37,7 +38,30 @@ namespace _127_WebAPIProductsReviews3.Controllers
                 products = products.Where(f => f.Price <= price).ToList();
 
             return Ok(products);
+        }
 
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+
+            var products = _context.Products
+                .Where(f => f.Id == id)
+                .Select(d => new ProductDTO
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Price = d.Price,
+                    AverageRating = 5,// change it later
+
+                    Reviews = d.Reviews.Select(r => new ReviewDTO
+                    {
+                        Id = r.Id,
+                        Text = r.Text,
+                        Rating = r.Rating
+                    }).ToList(),
+                    
+
+                }); 
         }
 
         [HttpPost]
