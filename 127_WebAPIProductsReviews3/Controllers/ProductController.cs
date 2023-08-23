@@ -74,14 +74,13 @@ namespace _127_WebAPIProductsReviews3.Controllers
                     Id = d.Id,
                     Name = d.Name,
                     Price = d.Price,
-                    AverageRating = 5,// change it later
-
                     Reviews = d.Reviews.Select(r => new Review
                     {
                         Id = r.Id,
                         Text = r.Text,
                         Rating = r.Rating
                     }).ToList(),
+                    AverageRating =  d.Reviews.Average(r=>r.Rating) // how to round up in here? to show 2 numbers after decimal. I tried. Math.Round(d.Reviews.Average(r=>r.Rating),2) but it doesn't seem to be working
                 });
 
             if (product is null)
