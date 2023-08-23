@@ -1,4 +1,7 @@
 
+using _127_WebAPIProductsReviews3.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace _127_WebAPIProductsReviews3
 {
     public class Program
@@ -13,6 +16,15 @@ namespace _127_WebAPIProductsReviews3
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
+
+            builder.Services.AddDbContext<ApplicationDbContext>(dbContextOptions => dbContextOptions
+                            .UseMySql(connectionString, serverVersion)
+                            .LogTo(Console.WriteLine, LogLevel.Information)
+                            .EnableSensitiveDataLogging()
+                            .EnableDetailedErrors());
 
             var app = builder.Build();
 
