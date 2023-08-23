@@ -17,41 +17,29 @@ namespace _127_WebAPIProductsReviews3.Controllers
             _context = context;
         }
 
-        //[HttpGet]
-        //public IActionResult Get([FromQuery] string? maxPrice)
-        //{
-        //    double price;
-        //    try
-        //    {
-        //        price = Convert.ToDouble(maxPrice);
-
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return BadRequest("maxPrice must be a number");
-        //        throw;
-        //    }
-
-        //    List<Product> products = _context.Products.ToList();
-
-        //    if (maxPrice != null)
-        //        products = products.Where(f => f.Price <= price).ToList();
-
-        //    return Ok(products);
-        //}
-
-
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] string? maxPrice)
         {
-            var products = _context.Products
+            double price = 0;
+
+            try
+            {
+                price = Convert.ToDouble(maxPrice);
+
+            }
+            catch (Exception)
+            {
+                return BadRequest("The maxPrice shoud contain only numbers!");
+            }
+
+            List<ProductDTO> products = _context.Products
                 .Select(d => new ProductDTO
                 {
                     Id = d.Id,
                     Name = d.Name,
                     Price = d.Price,
-                    AverageRating = 5, //change ir later
-                    Reviews = d.Reviews.Select(c => new Review
+                    AverageRating = d.Reviews.Average(r => r.Rating),
+                    Reviews = d.Reviews.Select(c => new ReviewDTO
                     {
                         Id = c.Id,
                         Text = c.Text,
@@ -60,7 +48,12 @@ namespace _127_WebAPIProductsReviews3.Controllers
                 })
                 .ToList();
 
+            if (maxPrice != null)
+            {
+                products = products.Where(f => f.Price <= price).ToList();
+            }
             return Ok(products);
+
         }
 
         [HttpGet("{id}")]
@@ -74,7 +67,7 @@ namespace _127_WebAPIProductsReviews3.Controllers
                     Id = d.Id,
                     Name = d.Name,
                     Price = d.Price,
-                    Reviews = d.Reviews.Select(r => new Review
+                    Reviews = d.Reviews.Select(r => new ReviewDTO
                     {
                         Id = r.Id,
                         Text = r.Text,

@@ -7,7 +7,7 @@
         public double Price { get; set; }
 
         // nav prop
-        public ICollection<Review> Reviews { get; set; }
+        public ICollection<ReviewDTO> Reviews { get; set; }
 
         public double AverageRating { get; set; }
     }
