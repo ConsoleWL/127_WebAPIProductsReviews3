@@ -17,25 +17,48 @@ namespace _127_WebAPIProductsReviews3.Controllers
             _context = context;
         }
 
+        //[HttpGet]
+        //public IActionResult Get([FromQuery] string? maxPrice)
+        //{
+        //    double price;
+        //    try
+        //    {
+        //        price = Convert.ToDouble(maxPrice);
+
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return BadRequest("maxPrice must be a number");
+        //        throw;
+        //    }
+
+        //    List<Product> products = _context.Products.ToList();
+
+        //    if (maxPrice != null)
+        //        products = products.Where(f => f.Price <= price).ToList();
+
+        //    return Ok(products);
+        //}
+
+
         [HttpGet]
-        public IActionResult Get([FromQuery] string? maxPrice)
+        public IActionResult Get()
         {
-            double price;
-            try
-            {
-                price = Convert.ToDouble(maxPrice);
-
-            }
-            catch (Exception)
-            {
-                return BadRequest("maxPrice must be a number");
-                throw;
-            }
-
-            List<Product> products = _context.Products.ToList();
-
-            if (maxPrice != null)
-                products = products.Where(f => f.Price <= price).ToList();
+            var products = _context.Products
+                .Select(d => new ProductDTO
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Price = d.Price,
+                    AverageRating = 5, //change ir later
+                    Reviews = d.Reviews.Select(c => new Review
+                    {
+                        Id = c.Id,
+                        Text = c.Text,
+                        Rating = c.Rating
+                    }).ToList()
+                })
+                .ToList();
 
             return Ok(products);
         }
@@ -44,7 +67,7 @@ namespace _127_WebAPIProductsReviews3.Controllers
         public IActionResult GetById(int id)
         {
 
-            var products = _context.Products
+            var product = _context.Products
                 .Where(f => f.Id == id)
                 .Select(d => new ProductDTO
                 {
@@ -53,15 +76,19 @@ namespace _127_WebAPIProductsReviews3.Controllers
                     Price = d.Price,
                     AverageRating = 5,// change it later
 
-                    Reviews = d.Reviews.Select(r => new ReviewDTO
+                    Reviews = d.Reviews.Select(r => new Review
                     {
                         Id = r.Id,
                         Text = r.Text,
                         Rating = r.Rating
                     }).ToList(),
-                    
+                });
 
-                }); 
+            if (product is null)
+                return Ok(product);
+
+            return Ok(product);
+
         }
 
         [HttpPost]

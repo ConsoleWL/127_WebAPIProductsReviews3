@@ -10,8 +10,8 @@ using _127_WebAPIProductsReviews3.Data;
 namespace _127_WebAPIProductsReviews3.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230823151717_SeedData")]
-    partial class SeedData
+    [Migration("20230823163110_Onceagain")]
+    partial class Onceagain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

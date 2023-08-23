@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace _127_WebAPIProductsReviews3.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Onceagain : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +54,40 @@ namespace _127_WebAPIProductsReviews3.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "Name", "Price" },
+                values: new object[,]
+                {
+                    { 1, "Wok Pan", 29.989999999999998 },
+                    { 2, "Heavy Duty Spatula", 4.9900000000000002 },
+                    { 3, "Rice Cooker", 49.990000000000002 },
+                    { 4, "Bamboo Steamer", 14.99 },
+                    { 5, "Chopsticks Set", 9.9900000000000002 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Reviews",
+                columns: new[] { "Id", "ProductId", "Rating", "Text" },
+                values: new object[,]
+                {
+                    { 1, 1, 5, "Great wok for stir-frying!" },
+                    { 2, 2, 4, "Good quality product." },
+                    { 3, 3, 5, "Makes perfect rice every time." },
+                    { 4, 4, 4, "Perfect for steaming vegetables." },
+                    { 5, 5, 4, "Nice chopsticks set for casual usage." },
+                    { 6, 1, 3, "Decent wok, but could be better." },
+                    { 7, 2, 2, "Melted on my stovetop." },
+                    { 8, 3, 2, "Not very durable, broke after a few uses." },
+                    { 9, 4, 3, "Steamer works well but could use more compartments." },
+                    { 10, 5, 2, "Chopsticks are too slippery to hold properly." },
+                    { 11, 1, 3, "Average wok, nothing special." },
+                    { 12, 2, 3, "Standard spatula, everything you need." },
+                    { 13, 3, 4, "Good value for the price." },
+                    { 14, 4, 5, "Convenient for steaming various dishes." },
+                    { 15, 5, 5, "Comfortable chopsticks to use." }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_ProductId",
