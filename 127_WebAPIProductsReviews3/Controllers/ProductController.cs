@@ -18,27 +18,15 @@ namespace _127_WebAPIProductsReviews3.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] string? maxPrice)
+        public IActionResult Get([FromQuery] double? maxPrice)
         {
-            double price = 0;
-
-            try
-            {
-                price = Convert.ToDouble(maxPrice);
-
-            }
-            catch (Exception)
-            {
-                return BadRequest("The maxPrice shoud contain only numbers!");
-            }
-
             List<ProductDTO> products = _context.Products
                 .Select(d => new ProductDTO
                 {
                     Id = d.Id,
                     Name = d.Name,
                     Price = d.Price,
-                    AverageRating = d.Reviews.Average(r => r.Rating),
+                    AverageRating = Math.Round(d.Reviews.Average(r => r.Rating), 2),
                     Reviews = d.Reviews.Select(c => new ReviewDTO
                     {
                         Id = c.Id,
@@ -50,8 +38,9 @@ namespace _127_WebAPIProductsReviews3.Controllers
 
             if (maxPrice != null)
             {
-                products = products.Where(f => f.Price <= price).ToList();
+                products = products.Where(p => p.Price <= maxPrice).ToList();
             }
+
             return Ok(products);
 
         }
@@ -60,26 +49,27 @@ namespace _127_WebAPIProductsReviews3.Controllers
         public IActionResult GetById(int id)
         {
 
-            var product = _context.Products
+            IQueryable<ProductDTO> products = _context.Products
                 .Where(f => f.Id == id)
-                .Select(d => new ProductDTO
+                .Select(f => new ProductDTO
                 {
-                    Id = d.Id,
-                    Name = d.Name,
-                    Price = d.Price,
-                    Reviews = d.Reviews.Select(r => new ReviewDTO
+                    Id = f.Id,
+                    Name = f.Name,
+                    Price = f.Price,
+
+                    Reviews = f.Reviews.Select(r => new ReviewDTO
                     {
                         Id = r.Id,
                         Text = r.Text,
                         Rating = r.Rating
                     }).ToList(),
-                    AverageRating =  d.Reviews.Average(r=>r.Rating) // how to round up in here? to show 2 numbers after decimal. I tried. Math.Round(d.Reviews.Average(r=>r.Rating),2) but it doesn't seem to be working
+                    AverageRating = Math.Round(f.Reviews.Average(r => r.Rating), 2)
                 });
 
-            if (product is null)
-                return Ok(product);
+            if (products is null)
+                return NotFound();
 
-            return Ok(product);
+            return Ok(products);
 
         }
 
